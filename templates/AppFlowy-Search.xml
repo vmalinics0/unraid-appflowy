@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-Search</Name>
+  <Repository>appflowyinc/appflowy_search:latest</Repository>
+  <Registry>https://hub.docker.com/r/appflowyinc/appflowy_search</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>AGPL-3.0</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>AppFlowy Search — full-text and semantic (AI-powered) search service for AppFlowy Cloud documents. Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Search.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams></ExtraParams>
+  <Description>
+    AppFlowy Search — provides full-text keyword search and optional AI-powered semantic search over AppFlowy documents.
+    Full-text search works without an OpenAI API key. Semantic/vector search requires &lt;b&gt;AI OpenAI API Key&lt;/b&gt;.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) AppFlowy-Nginx
+  </Description>
+
+  <!-- Keyword index storage -->
+  <Config Name="Keyword Index Directory" Target="/var/lib/appflowy/keyword_index" Default="/mnt/user/appdata/AppFlowy-Search/keyword_index" Mode="rw" Description="Persistent directory for the full-text (keyword) search index. Must have sufficient free space." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Search/keyword_index</Config>
+
+  <!-- Database / Cache -->
+  <Config Name="Database URL" Target="APPFLOWY_SEARCH_DATABASE_URL" Default="postgres://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres" Mode="" Description="PostgreSQL connection string. Must match AppFlowy-Cloud." Type="Variable" Display="always" Required="true" Mask="false">postgres://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres</Config>
+  <Config Name="Redis URL" Target="APPFLOWY_SEARCH_REDIS_URL" Default="redis://AppFlowy-Redis:6379" Mode="" Description="Redis connection URL." Type="Variable" Display="always" Required="true" Mask="false">redis://AppFlowy-Redis:6379</Config>
+
+  <!-- JWT -->
+  <Config Name="JWT Secret" Target="APPFLOWY_GOTRUE_JWT_SECRET" Default="changeme_jwt_secret_min32chars!!" Mode="" Description="Shared JWT secret. Must be identical to GoTrue and AppFlowy-Cloud." Type="Variable" Display="always" Required="true" Mask="true">changeme_jwt_secret_min32chars!!</Config>
+
+  <!-- S3 / MinIO -->
+  <Config Name="Use MinIO" Target="APPFLOWY_S3_USE_MINIO" Default="true" Mode="" Description="Set true to use MinIO." Type="Variable" Display="always" Required="true" Mask="false">true</Config>
+  <Config Name="S3 Access Key" Target="APPFLOWY_S3_ACCESS_KEY" Default="minioadmin" Mode="" Description="S3/MinIO access key." Type="Variable" Display="always" Required="true" Mask="false">minioadmin</Config>
+  <Config Name="S3 Secret Key" Target="APPFLOWY_S3_SECRET_KEY" Default="changeme_minio_secret" Mode="" Description="S3/MinIO secret key." Type="Variable" Display="always" Required="true" Mask="true">changeme_minio_secret</Config>
+  <Config Name="S3 Bucket" Target="APPFLOWY_S3_BUCKET" Default="appflowy" Mode="" Description="S3/MinIO bucket name." Type="Variable" Display="always" Required="true" Mask="false">appflowy</Config>
+  <Config Name="MinIO URL (internal)" Target="APPFLOWY_S3_MINIO_URL" Default="http://AppFlowy-MinIO:9000" Mode="" Description="Internal MinIO API URL." Type="Variable" Display="always" Required="true" Mask="false">http://AppFlowy-MinIO:9000</Config>
+  <Config Name="S3 Region" Target="APPFLOWY_S3_REGION" Default="" Mode="" Description="AWS S3 region (leave empty for MinIO)." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+
+  <!-- AI / OpenAI (optional for semantic search) -->
+  <Config Name="OpenAI API Key" Target="AI_OPENAI_API_KEY" Default="" Mode="" Description="OpenAI API key for semantic/vector search and document embeddings. Leave empty to use keyword-only search." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="Azure OpenAI API Key" Target="AZURE_OPENAI_API_KEY" Default="" Mode="" Description="Azure-hosted OpenAI API key (alternative to OpenAI). Leave empty if using standard OpenAI." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="Azure OpenAI Endpoint" Target="AZURE_OPENAI_ENDPOINT" Default="" Mode="" Description="Azure OpenAI resource endpoint URL." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Azure OpenAI API Version" Target="AZURE_OPENAI_API_VERSION" Default="" Mode="" Description="Azure OpenAI API version string." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+
+  <!-- Search features -->
+  <Config Name="Keyword Search Enabled" Target="APPFLOWY_KEYWORD_SEARCH_ENABLED" Default="true" Mode="" Description="Enable full-text keyword search. Recommended: true." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Background Indexer Enabled" Target="APPFLOWY_BACKGROUND_INDEXER_ENABLED" Default="true" Mode="" Description="Continuously index new/updated documents in the background." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Keyword Worker Enabled" Target="APPFLOWY_KEYWORD_WORKER_ENABLED" Default="true" Mode="" Description="Enable the keyword indexing worker." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Database Indexer Enabled" Target="APPFLOWY_INDEXER_DATABASE_ENABLED" Default="false" Mode="" Description="Enable database-level indexing (experimental)." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="Keyword Index Map Size (bytes)" Target="APPFLOWY_KEYWORD_INDEX_MAP_SIZE_BYTES" Default="2147483648" Mode="" Description="Memory-mapped file size for keyword index in bytes. Default: 2 GiB. Reduce if RAM is limited." Type="Variable" Display="advanced" Required="false" Mask="false">2147483648</Config>
+
+  <!-- Network -->
+  <Config Name="Listen Host" Target="APPFLOWY_SEARCH_HOST" Default="::" Mode="" Description="IP address the search service listens on. :: = all interfaces." Type="Variable" Display="advanced" Required="false" Mask="false">::</Config>
+  <Config Name="Listen Port" Target="APPFLOWY_SEARCH_PORT" Default="4002" Mode="" Description="Port the search service listens on (internal)." Type="Variable" Display="advanced" Required="false" Mask="false">4002</Config>
+  <Config Name="Log Level" Target="RUST_LOG" Default="info" Mode="" Description="Rust log level." Type="Variable" Display="advanced" Required="false" Mask="false">info</Config>
+</Container>

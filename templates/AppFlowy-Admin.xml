@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-Admin</Name>
+  <Repository>appflowyinc/admin_frontend:latest</Repository>
+  <Registry>https://hub.docker.com/r/appflowyinc/admin_frontend</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>AGPL-3.0</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>AppFlowy Admin Frontend — the web-based admin console for managing users, workspaces, and settings. Accessible at /console via the nginx proxy. Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Admin.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams></ExtraParams>
+  <Description>
+    AppFlowy Admin Frontend — a Next.js web application for server administration.
+    Accessible through AppFlowy-Nginx at &lt;b&gt;http://YOUR_SERVER_IP/console&lt;/b&gt;.
+    Use the GoTrue admin credentials to log in.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) AppFlowy-Nginx
+  </Description>
+
+  <Config Name="GoTrue Base URL" Target="APPFLOWY_GOTRUE_BASE_URL" Default="http://AppFlowy-GoTrue:9999" Mode="" Description="Internal URL of the AppFlowy-GoTrue container." Type="Variable" Display="always" Required="true" Mask="false">http://AppFlowy-GoTrue:9999</Config>
+  <Config Name="AppFlowy Cloud Base URL" Target="APPFLOWY_BASE_URL" Default="http://AppFlowy-Cloud:8000" Mode="" Description="Internal URL of the AppFlowy-Cloud container." Type="Variable" Display="always" Required="true" Mask="false">http://AppFlowy-Cloud:8000</Config>
+</Container>

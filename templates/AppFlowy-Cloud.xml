@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-Cloud</Name>
+  <Repository>appflowyinc/appflowy_cloud:latest</Repository>
+  <Registry>https://hub.docker.com/r/appflowyinc/appflowy_cloud</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>AGPL-3.0</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>AppFlowy Cloud — the core Rust backend providing REST API, WebSocket real-time collaboration, file management, and AI integration. Deploy fifth (after GoTrue). Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Cloud.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams></ExtraParams>
+  <Description>
+    AppFlowy Cloud — the primary Rust-based backend service for AppFlowy.
+    Provides the REST API (:8000), WebSocket collaboration endpoints, document storage, and AI features.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Required:&lt;/b&gt; Set &lt;b&gt;Base URL&lt;/b&gt;, &lt;b&gt;JWT Secret&lt;/b&gt; (same as AppFlowy-GoTrue), database/Redis/MinIO credentials.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) AppFlowy-Nginx
+  </Description>
+
+  <!-- === Core === -->
+  <Config Name="Base URL" Target="APPFLOWY_BASE_URL" Default="http://YOUR_SERVER_IP" Mode="" Description="Public-facing base URL of your AppFlowy instance (e.g. http://192.168.1.100 or https://appflowy.yourdomain.com). No trailing slash." Type="Variable" Display="always" Required="true" Mask="false">http://YOUR_SERVER_IP</Config>
+  <Config Name="JWT Secret" Target="APPFLOWY_GOTRUE_JWT_SECRET" Default="changeme_jwt_secret_min32chars!!" Mode="" Description="Shared JWT secret. MUST be identical to GOTRUE_JWT_SECRET in AppFlowy-GoTrue. Keep private." Type="Variable" Display="always" Required="true" Mask="true">changeme_jwt_secret_min32chars!!</Config>
+  <Config Name="Web URL" Target="APPFLOWY_WEB_URL" Default="http://YOUR_SERVER_IP" Mode="" Description="URL where AppFlowy Web is served. Usually the same as Base URL." Type="Variable" Display="always" Required="true" Mask="false">http://YOUR_SERVER_IP</Config>
+
+  <!-- Database / Cache -->
+  <Config Name="Database URL" Target="APPFLOWY_DATABASE_URL" Default="postgres://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres" Mode="" Description="PostgreSQL connection string. Update password and host if changed." Type="Variable" Display="always" Required="true" Mask="false">postgres://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres</Config>
+  <Config Name="Redis URI" Target="APPFLOWY_REDIS_URI" Default="redis://AppFlowy-Redis:6379" Mode="" Description="Redis connection URI." Type="Variable" Display="always" Required="true" Mask="false">redis://AppFlowy-Redis:6379</Config>
+
+  <!-- GoTrue -->
+  <Config Name="GoTrue Base URL" Target="APPFLOWY_GOTRUE_BASE_URL" Default="http://AppFlowy-GoTrue:9999" Mode="" Description="Internal URL of the AppFlowy-GoTrue container on the appflowy network." Type="Variable" Display="always" Required="true" Mask="false">http://AppFlowy-GoTrue:9999</Config>
+
+  <!-- S3 / MinIO -->
+  <Config Name="Use MinIO" Target="APPFLOWY_S3_USE_MINIO" Default="true" Mode="" Description="Set true to use MinIO (recommended for self-hosted). Set false to use AWS S3." Type="Variable" Display="always" Required="true" Mask="false">true</Config>
+  <Config Name="S3 Access Key" Target="APPFLOWY_S3_ACCESS_KEY" Default="minioadmin" Mode="" Description="S3/MinIO access key. Must match AppFlowy-MinIO MINIO_ROOT_USER." Type="Variable" Display="always" Required="true" Mask="false">minioadmin</Config>
+  <Config Name="S3 Secret Key" Target="APPFLOWY_S3_SECRET_KEY" Default="changeme_minio_secret" Mode="" Description="S3/MinIO secret key. Must match AppFlowy-MinIO MINIO_ROOT_PASSWORD." Type="Variable" Display="always" Required="true" Mask="true">changeme_minio_secret</Config>
+  <Config Name="S3 Bucket" Target="APPFLOWY_S3_BUCKET" Default="appflowy" Mode="" Description="S3/MinIO bucket name. Created automatically on first start if APPFLOWY_S3_CREATE_BUCKET=true." Type="Variable" Display="always" Required="true" Mask="false">appflowy</Config>
+  <Config Name="MinIO URL (internal)" Target="APPFLOWY_S3_MINIO_URL" Default="http://AppFlowy-MinIO:9000" Mode="" Description="Internal MinIO API URL for container-to-container communication." Type="Variable" Display="always" Required="true" Mask="false">http://AppFlowy-MinIO:9000</Config>
+  <Config Name="S3 Presigned URL Endpoint" Target="APPFLOWY_S3_PRESIGNED_URL_ENDPOINT" Default="http://YOUR_SERVER_IP/minio-api" Mode="" Description="Public-facing URL for MinIO presigned file access. Clients use this to upload/download files directly." Type="Variable" Display="always" Required="true" Mask="false">http://YOUR_SERVER_IP/minio-api</Config>
+  <Config Name="Auto-create S3 Bucket" Target="APPFLOWY_S3_CREATE_BUCKET" Default="true" Mode="" Description="Automatically create the S3 bucket on startup if it does not exist." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="S3 Region" Target="APPFLOWY_S3_REGION" Default="" Mode="" Description="AWS S3 region (e.g. us-east-1). Required only when APPFLOWY_S3_USE_MINIO=false." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+
+  <!-- Access control -->
+  <Config Name="Access Control" Target="APPFLOWY_ACCESS_CONTROL" Default="true" Mode="" Description="Enable permission-based workspace access control. Recommended: true." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="DB Max Connections" Target="APPFLOWY_DATABASE_MAX_CONNECTIONS" Default="40" Mode="" Description="PostgreSQL connection pool size. Reduce if your Postgres hits connection limits." Type="Variable" Display="advanced" Required="false" Mask="false">40</Config>
+  <Config Name="WebSocket Mailbox Size" Target="APPFLOWY_WEBSOCKET_MAILBOX_SIZE" Default="6000" Mode="" Description="Max queued WebSocket messages per actor. Higher = more memory; lower may drop messages under load." Type="Variable" Display="advanced" Required="false" Mask="false">6000</Config>
+
+  <!-- Signup control -->
+  <Config Name="Whitelist Signup" Target="SIGNUP_WHITELIST_ENABLED" Default="false" Mode="" Description="Restrict signup to whitelisted emails. Requires GOTRUE_DISABLE_SIGNUP=false." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="Guest Invite Approval" Target="GUEST_INVITES_REQUIRE_ADMIN_APPROVAL" Default="false" Mode="" Description="Require admin approval for guest invitations." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+
+  <!-- Search -->
+  <Config Name="Search Service URL" Target="APPFLOWY_SEARCH_SERVICE_URL" Default="http://AppFlowy-Search:4002" Mode="" Description="Internal URL for the AppFlowy-Search container." Type="Variable" Display="advanced" Required="false" Mask="false">http://AppFlowy-Search:4002</Config>
+  <Config Name="Search Request Timeout (s)" Target="APPFLOWY_SEARCH_REQUEST_TIMEOUT_SECS" Default="10" Mode="" Description="Timeout in seconds for requests to the search service." Type="Variable" Display="advanced" Required="false" Mask="false">10</Config>
+
+  <!-- AI -->
+  <Config Name="AI Enabled" Target="AI_ENABLED" Default="true" Mode="" Description="Enable AI features. Set false to disable entirely." Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="AI Server Host" Target="AI_SERVER_HOST" Default="AppFlowy-AI" Mode="" Description="Hostname of the AppFlowy-AI container on the appflowy network." Type="Variable" Display="advanced" Required="false" Mask="false">AppFlowy-AI</Config>
+  <Config Name="AI Server Port" Target="AI_SERVER_PORT" Default="5001" Mode="" Description="Port of the AI service." Type="Variable" Display="advanced" Required="false" Mask="false">5001</Config>
+  <Config Name="OpenAI API Key" Target="AI_OPENAI_API_KEY" Default="" Mode="" Description="OpenAI API key. Required for AI-powered search summaries and document embeddings. Leave empty to disable AI." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+
+  <!-- SMTP (same values as GoTrue SMTP for outgoing mail from appflowy_cloud) -->
+  <Config Name="SMTP Host" Target="APPFLOWY_MAILER_SMTP_HOST" Default="" Mode="" Description="SMTP host for AppFlowy Cloud mailer (e.g. smtp.gmail.com)." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SMTP Port" Target="APPFLOWY_MAILER_SMTP_PORT" Default="465" Mode="" Description="SMTP port." Type="Variable" Display="advanced" Required="false" Mask="false">465</Config>
+  <Config Name="SMTP Username" Target="APPFLOWY_MAILER_SMTP_USERNAME" Default="" Mode="" Description="SMTP authentication username." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SMTP Email" Target="APPFLOWY_MAILER_SMTP_EMAIL" Default="" Mode="" Description="Sender email address." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SMTP Password" Target="APPFLOWY_MAILER_SMTP_PASSWORD" Default="" Mode="" Description="SMTP password." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="SMTP TLS Kind" Target="APPFLOWY_MAILER_SMTP_TLS_KIND" Default="wrapper" Mode="" Description="TLS mode: wrapper (port 465), required, opportunistic, or none." Type="Variable" Display="advanced" Required="false" Mask="false">wrapper</Config>
+
+  <!-- AssemblyAI (optional transcription) -->
+  <Config Name="AssemblyAI API Key" Target="ASSEMBLYAI_API_KEY" Default="" Mode="" Description="AssemblyAI API key for voice transcription features. Optional." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="AssemblyAI API Base" Target="ASSEMBLYAI_API_BASE" Default="https://api.assemblyai.com/v2" Mode="" Description="AssemblyAI REST API base URL." Type="Variable" Display="advanced" Required="false" Mask="false">https://api.assemblyai.com/v2</Config>
+  <Config Name="AssemblyAI Streaming Base" Target="ASSEMBLYAI_STREAMING_API_BASE" Default="https://streaming.assemblyai.com/v3" Mode="" Description="AssemblyAI streaming API base URL." Type="Variable" Display="advanced" Required="false" Mask="false">https://streaming.assemblyai.com/v3</Config>
+
+  <!-- Log level -->
+  <Config Name="Log Level" Target="RUST_LOG" Default="info" Mode="" Description="Rust log level: error, warn, info, debug, trace." Type="Variable" Display="advanced" Required="false" Mask="false">info</Config>
+  <Config Name="Environment" Target="APPFLOWY_ENVIRONMENT" Default="production" Mode="" Description="Deployment environment. Keep as production." Type="Variable" Display="advanced" Required="false" Mask="false">production</Config>
+</Container>

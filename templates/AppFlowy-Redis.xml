@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-Redis</Name>
+  <Repository>redis:7</Repository>
+  <Registry>https://hub.docker.com/_/redis</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>BSD-3-Clause</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>Redis 7 in-memory cache and pub/sub broker for AppFlowy Cloud real-time collaboration and task queuing. Deploy second. Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Redis.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams></ExtraParams>
+  <Description>
+    Redis 7 — in-memory data store used by AppFlowy Cloud for WebSocket pub/sub, caching, and background job queuing.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) AppFlowy-Nginx
+  </Description>
+
+  <!-- Storage -->
+  <Config Name="Data Directory" Target="/data" Default="/mnt/user/appdata/AppFlowy-Redis" Mode="rw" Description="Persistent storage for Redis RDB snapshots." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Redis</Config>
+
+  <!-- Port (internal only) -->
+  <Config Name="Redis Port (internal)" Target="6379" Default="6379" Mode="tcp" Description="Redis port exposed to the appflowy Docker network. Change host port only if you need external access." Type="Port" Display="advanced" Required="false" Mask="false">6379</Config>
+</Container>

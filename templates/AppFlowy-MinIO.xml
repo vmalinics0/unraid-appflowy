@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-MinIO</Name>
+  <Repository>minio/minio:latest</Repository>
+  <Registry>https://hub.docker.com/r/minio/minio</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>AGPL-3.0</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>MinIO S3-compatible object storage for AppFlowy Cloud file uploads, attachments, and collaboration snapshots. Deploy third. Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <WebUI>http://[IP]:[PORT:9001]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-MinIO.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams>server /data --console-address ":9001"</ExtraParams>
+  <Description>
+    MinIO — S3-compatible object storage for all AppFlowy file uploads, attachments, and collaboration data blobs.
+    &lt;br/&gt;&lt;br/&gt;
+    The Web UI (MinIO Console) is accessible on port 9001. The S3 API is on port 9000 (internal network only).
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) AppFlowy-Nginx
+  </Description>
+
+  <!-- Storage -->
+  <Config Name="Data Directory" Target="/data" Default="/mnt/user/appdata/AppFlowy-MinIO" Mode="rw" Description="Persistent storage for all MinIO buckets and objects." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-MinIO</Config>
+
+  <!-- Credentials -->
+  <Config Name="Root User (Access Key)" Target="MINIO_ROOT_USER" Default="minioadmin" Mode="" Description="MinIO root username / S3 access key. Change this for production." Type="Variable" Display="always" Required="true" Mask="false">minioadmin</Config>
+  <Config Name="Root Password (Secret Key)" Target="MINIO_ROOT_PASSWORD" Default="changeme_minio_secret" Mode="" Description="MinIO root password / S3 secret key. Change this for production. Must match APPFLOWY_S3_SECRET_KEY in other services." Type="Variable" Display="always" Required="true" Mask="true">changeme_minio_secret</Config>
+
+  <!-- Base URL for browser redirect -->
+  <Config Name="Browser Redirect URL" Target="MINIO_BROWSER_REDIRECT_URL" Default="http://YOUR_SERVER_IP/minio" Mode="" Description="Public URL for the MinIO web console. Set to http://YOUR_SERVER_IP/minio (or your domain)." Type="Variable" Display="always" Required="true" Mask="false">http://YOUR_SERVER_IP/minio</Config>
+
+  <!-- Ports -->
+  <Config Name="MinIO Console Port" Target="9001" Default="9001" Mode="tcp" Description="MinIO web console port — accessible from your browser." Type="Port" Display="always" Required="true" Mask="false">9001</Config>
+  <Config Name="MinIO API Port (internal)" Target="9000" Default="9000" Mode="tcp" Description="MinIO S3 API port — used internally by AppFlowy services. No host port needed unless you need direct S3 access." Type="Port" Display="advanced" Required="false" Mask="false">9000</Config>
+</Container>

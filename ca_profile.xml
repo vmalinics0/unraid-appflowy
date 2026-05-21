@@ -1,0 +1,31 @@
+<CommunityApplications>
+  <Profile>
+# AppFlowy Cloud — Unraid Community Apps
+
+Self-host [AppFlowy Cloud](https://github.com/AppFlowy-IO/AppFlowy-Cloud), the open-source collaborative workspace and knowledge base (privacy-first Notion alternative).
+
+This repository contains Docker container templates for the full AppFlowy Cloud stack:
+
+- **AppFlowy-Postgres** — PostgreSQL 16 with pgvector (primary database)
+- **AppFlowy-Redis** — Redis 7 (cache &amp; pub/sub)
+- **AppFlowy-MinIO** — MinIO S3-compatible object storage
+- **AppFlowy-GoTrue** — Authentication service (JWT, OAuth, email)
+- **AppFlowy-Cloud** — Core Rust backend (REST API + WebSocket)
+- **AppFlowy-Admin** — Admin web console
+- **AppFlowy-Web** — Browser-based AppFlowy client
+- **AppFlowy-Worker** — Background job processor
+- **AppFlowy-Search** — Full-text and semantic search
+- **AppFlowy-AI** — Optional AI/LLM features (requires OpenAI key)
+- **AppFlowy-Nginx** — Reverse proxy (single public entry point)
+
+**Prerequisites:** Create a custom Docker network named `appflowy` before deploying (Settings → Docker → Custom Networks, or `docker network create appflowy` via SSH).
+
+For setup instructions see the [README](https://github.com/vmalinics0/unraid-appflowy/blob/main/README.md).
+
+**Support:** [AppFlowy Cloud Discussions](https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions)
+  </Profile>
+  <Icon>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/icon.svg</Icon>
+  <WebPage>https://github.com/vmalinics0/unraid-appflowy</WebPage>
+  <Forum>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Forum>
+  <Discord>https://discord.gg/appflowy</Discord>
+</CommunityApplications>

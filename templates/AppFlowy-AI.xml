@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-AI</Name>
+  <Repository>appflowyinc/appflowy_ai:latest</Repository>
+  <Registry>https://hub.docker.com/r/appflowyinc/appflowy_ai</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>AGPL-3.0</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>AppFlowy AI — optional Python service providing LLM-powered chat, document summarisation, and embedding generation for AppFlowy Cloud. Requires an OpenAI or Azure OpenAI API key. Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-AI.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams></ExtraParams>
+  <Description>
+    AppFlowy AI — a Python/FastAPI service that bridges AppFlowy Cloud to OpenAI (or Azure OpenAI) for AI chat, summaries, and document embeddings.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;This container is optional.&lt;/b&gt; AppFlowy functions without it, but AI-powered features (chat, search summaries, embeddings) will be unavailable.
+    You must provide a valid &lt;b&gt;OpenAI API Key&lt;/b&gt; (or Azure OpenAI credentials).
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search, AppFlowy-AI → (7) AppFlowy-Nginx
+  </Description>
+
+  <!-- OpenAI / Azure (at least one required) -->
+  <Config Name="OpenAI API Key" Target="OPENAI_API_KEY" Default="" Mode="" Description="OpenAI API key. Required unless using Azure OpenAI. Used for chat and embeddings." Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="Azure OpenAI API Key" Target="AZURE_OPENAI_API_KEY" Default="" Mode="" Description="Azure-hosted OpenAI API key. Use this instead of OPENAI_API_KEY for Azure deployments." Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="Azure OpenAI Endpoint" Target="AZURE_OPENAI_ENDPOINT" Default="" Mode="" Description="Azure OpenAI resource endpoint URL (e.g. https://my-resource.openai.azure.com/)." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Azure OpenAI API Version" Target="AZURE_OPENAI_API_VERSION" Default="" Mode="" Description="Azure OpenAI API version string (e.g. 2024-02-01)." Type="Variable" Display="always" Required="false" Mask="false"></Config>
+
+  <!-- AppFlowy connection -->
+  <Config Name="AppFlowy Host (Base URL)" Target="AI_APPFLOWY_HOST" Default="http://YOUR_SERVER_IP" Mode="" Description="Public-facing base URL. Must match APPFLOWY_BASE_URL in AppFlowy-Cloud." Type="Variable" Display="always" Required="true" Mask="false">http://YOUR_SERVER_IP</Config>
+  <Config Name="JWT Secret" Target="APPFLOWY_GOTRUE_JWT_SECRET" Default="changeme_jwt_secret_min32chars!!" Mode="" Description="Shared JWT secret. Must be identical to GoTrue and AppFlowy-Cloud." Type="Variable" Display="always" Required="true" Mask="true">changeme_jwt_secret_min32chars!!</Config>
+
+  <!-- Database / Cache -->
+  <Config Name="Database URL" Target="AI_DATABASE_URL" Default="postgresql+psycopg://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres" Mode="" Description="PostgreSQL connection string for the AI service (uses psycopg driver syntax)." Type="Variable" Display="always" Required="true" Mask="false">postgresql+psycopg://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres</Config>
+  <Config Name="Redis URL" Target="AI_REDIS_URL" Default="redis://AppFlowy-Redis:6379" Mode="" Description="Redis connection URL." Type="Variable" Display="always" Required="true" Mask="false">redis://AppFlowy-Redis:6379</Config>
+
+  <!-- S3 / MinIO -->
+  <Config Name="Use MinIO" Target="AI_USE_MINIO" Default="true" Mode="" Description="Set true to use MinIO." Type="Variable" Display="always" Required="true" Mask="false">true</Config>
+  <Config Name="S3 Access Key" Target="APPFLOWY_S3_ACCESS_KEY" Default="minioadmin" Mode="" Description="S3/MinIO access key." Type="Variable" Display="always" Required="true" Mask="false">minioadmin</Config>
+  <Config Name="S3 Secret Key" Target="APPFLOWY_S3_SECRET_KEY" Default="changeme_minio_secret" Mode="" Description="S3/MinIO secret key." Type="Variable" Display="always" Required="true" Mask="true">changeme_minio_secret</Config>
+  <Config Name="S3 Bucket" Target="APPFLOWY_S3_BUCKET" Default="appflowy" Mode="" Description="S3/MinIO bucket name." Type="Variable" Display="always" Required="true" Mask="false">appflowy</Config>
+  <Config Name="S3 Region" Target="APPFLOWY_S3_REGION" Default="" Mode="" Description="AWS S3 region (leave empty for MinIO)." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="MinIO URL (internal)" Target="AI_MINIO_URL" Default="http://AppFlowy-MinIO:9000" Mode="" Description="Internal MinIO API URL." Type="Variable" Display="always" Required="true" Mask="false">http://AppFlowy-MinIO:9000</Config>
+
+  <!-- Server -->
+  <Config Name="AI Server Port" Target="AI_SERVER_PORT" Default="5001" Mode="" Description="Port the AI service listens on. Must match AI_SERVER_PORT in AppFlowy-Cloud." Type="Variable" Display="advanced" Required="false" Mask="false">5001</Config>
+
+  <!-- Model selection -->
+  <Config Name="Default AI Model" Target="DEFAULT_AI_MODEL" Default="gpt-4.1-mini" Mode="" Description="Default OpenAI chat model (e.g. gpt-4.1-mini, gpt-4o). Must be available in your OpenAI account." Type="Variable" Display="advanced" Required="false" Mask="false">gpt-4.1-mini</Config>
+  <Config Name="Default Completion Model" Target="DEFAULT_AI_COMPLETION_MODEL" Default="gpt-4.1-mini" Mode="" Description="Model used for completions/summaries." Type="Variable" Display="advanced" Required="false" Mask="false">gpt-4.1-mini</Config>
+</Container>

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-Worker</Name>
+  <Repository>appflowyinc/appflowy_worker:latest</Repository>
+  <Registry>https://hub.docker.com/r/appflowyinc/appflowy_worker</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>AGPL-3.0</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>AppFlowy Worker — background job processor handling document imports, exports, and async tasks for AppFlowy Cloud. Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Worker.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams></ExtraParams>
+  <Description>
+    AppFlowy Worker — a background Rust service that processes asynchronous jobs such as document imports and exports.
+    Must share the same PostgreSQL, Redis, and S3/MinIO credentials as AppFlowy-Cloud.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) AppFlowy-Nginx
+  </Description>
+
+  <!-- Database / Cache -->
+  <Config Name="Database URL" Target="APPFLOWY_WORKER_DATABASE_URL" Default="postgres://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres" Mode="" Description="PostgreSQL connection string. Must match AppFlowy-Cloud." Type="Variable" Display="always" Required="true" Mask="false">postgres://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres</Config>
+  <Config Name="Database Name" Target="APPFLOWY_WORKER_DATABASE_NAME" Default="postgres" Mode="" Description="PostgreSQL database name." Type="Variable" Display="always" Required="true" Mask="false">postgres</Config>
+  <Config Name="Redis URL" Target="APPFLOWY_WORKER_REDIS_URL" Default="redis://AppFlowy-Redis:6379" Mode="" Description="Redis connection URL. Must match AppFlowy-Cloud." Type="Variable" Display="always" Required="true" Mask="false">redis://AppFlowy-Redis:6379</Config>
+
+  <!-- S3 / MinIO -->
+  <Config Name="Use MinIO" Target="APPFLOWY_S3_USE_MINIO" Default="true" Mode="" Description="Set true to use MinIO. Must match AppFlowy-Cloud." Type="Variable" Display="always" Required="true" Mask="false">true</Config>
+  <Config Name="S3 Access Key" Target="APPFLOWY_S3_ACCESS_KEY" Default="minioadmin" Mode="" Description="S3/MinIO access key. Must match AppFlowy-MinIO." Type="Variable" Display="always" Required="true" Mask="false">minioadmin</Config>
+  <Config Name="S3 Secret Key" Target="APPFLOWY_S3_SECRET_KEY" Default="changeme_minio_secret" Mode="" Description="S3/MinIO secret key. Must match AppFlowy-MinIO." Type="Variable" Display="always" Required="true" Mask="true">changeme_minio_secret</Config>
+  <Config Name="S3 Bucket" Target="APPFLOWY_S3_BUCKET" Default="appflowy" Mode="" Description="S3/MinIO bucket name. Must match AppFlowy-Cloud." Type="Variable" Display="always" Required="true" Mask="false">appflowy</Config>
+  <Config Name="MinIO URL (internal)" Target="APPFLOWY_S3_MINIO_URL" Default="http://AppFlowy-MinIO:9000" Mode="" Description="Internal MinIO API URL." Type="Variable" Display="always" Required="true" Mask="false">http://AppFlowy-MinIO:9000</Config>
+  <Config Name="S3 Region" Target="APPFLOWY_S3_REGION" Default="" Mode="" Description="AWS S3 region. Leave empty when using MinIO." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+
+  <!-- SMTP (optional) -->
+  <Config Name="SMTP Host" Target="APPFLOWY_MAILER_SMTP_HOST" Default="" Mode="" Description="SMTP host for worker outgoing mail." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SMTP Port" Target="APPFLOWY_MAILER_SMTP_PORT" Default="465" Mode="" Description="SMTP port." Type="Variable" Display="advanced" Required="false" Mask="false">465</Config>
+  <Config Name="SMTP Username" Target="APPFLOWY_MAILER_SMTP_USERNAME" Default="" Mode="" Description="SMTP username." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SMTP Email" Target="APPFLOWY_MAILER_SMTP_EMAIL" Default="" Mode="" Description="Sender email address." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SMTP Password" Target="APPFLOWY_MAILER_SMTP_PASSWORD" Default="" Mode="" Description="SMTP password." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="SMTP TLS Kind" Target="APPFLOWY_MAILER_SMTP_TLS_KIND" Default="wrapper" Mode="" Description="TLS mode: wrapper, required, opportunistic, or none." Type="Variable" Display="advanced" Required="false" Mask="false">wrapper</Config>
+
+  <!-- Tuning -->
+  <Config Name="Import Tick Interval (s)" Target="APPFLOWY_WORKER_IMPORT_TICK_INTERVAL" Default="30" Mode="" Description="How often (seconds) the worker polls the import queue." Type="Variable" Display="advanced" Required="false" Mask="false">30</Config>
+  <Config Name="Log Level" Target="RUST_LOG" Default="info" Mode="" Description="Rust log level." Type="Variable" Display="advanced" Required="false" Mask="false">info</Config>
+  <Config Name="Environment" Target="APPFLOWY_WORKER_ENVIRONMENT" Default="production" Mode="" Description="Worker environment. Keep as production." Type="Variable" Display="advanced" Required="false" Mask="false">production</Config>
+</Container>

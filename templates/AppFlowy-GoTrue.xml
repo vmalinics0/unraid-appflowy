@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-GoTrue</Name>
+  <Repository>appflowyinc/gotrue:latest</Repository>
+  <Registry>https://hub.docker.com/r/appflowyinc/gotrue</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>MIT</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>GoTrue authentication service for AppFlowy Cloud — handles user sign-up, login, JWT issuance, OAuth, email magic links, and SAML. Deploy fourth (after Postgres). Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-GoTrue.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams></ExtraParams>
+  <Description>
+    GoTrue (Supabase Auth) — the authentication and identity service for AppFlowy Cloud.
+    Manages user registration, JWT token issuance, OAuth providers (Google, GitHub, Discord), email confirmation, and SAML 2.0.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Required:&lt;/b&gt; Set &lt;b&gt;Base URL&lt;/b&gt;, &lt;b&gt;Admin Email/Password&lt;/b&gt;, and &lt;b&gt;JWT Secret&lt;/b&gt;.
+    The JWT Secret must be identical in AppFlowy-Cloud and all services that verify tokens.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) AppFlowy-Nginx
+  </Description>
+
+  <!-- === Core: must be set by user === -->
+  <Config Name="Base URL" Target="API_EXTERNAL_URL" Default="http://YOUR_SERVER_IP/gotrue" Mode="" Description="Public-facing GoTrue URL. Set to http://YOUR_SERVER_IP/gotrue (or your domain with /gotrue). Must be reachable by clients for OAuth redirects." Type="Variable" Display="always" Required="true" Mask="false">http://YOUR_SERVER_IP/gotrue</Config>
+  <Config Name="Admin Email" Target="GOTRUE_ADMIN_EMAIL" Default="admin@example.com" Mode="" Description="Email address of the initial admin account created on first start." Type="Variable" Display="always" Required="true" Mask="false">admin@example.com</Config>
+  <Config Name="Admin Password" Target="GOTRUE_ADMIN_PASSWORD" Default="changeme_admin_password" Mode="" Description="Password for the initial admin account." Type="Variable" Display="always" Required="true" Mask="true">changeme_admin_password</Config>
+  <Config Name="JWT Secret" Target="GOTRUE_JWT_SECRET" Default="changeme_jwt_secret_min32chars!!" Mode="" Description="Shared JWT signing secret. MUST be identical to APPFLOWY_GOTRUE_JWT_SECRET in AppFlowy-Cloud. Minimum 32 characters. Keep private." Type="Variable" Display="always" Required="true" Mask="true">changeme_jwt_secret_min32chars!!</Config>
+
+  <!-- Database -->
+  <Config Name="Database URL" Target="DATABASE_URL" Default="postgres://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres?search_path=auth" Mode="" Description="GoTrue PostgreSQL connection string. Update user, password, and host if you changed them. Uses the auth schema." Type="Variable" Display="always" Required="true" Mask="false">postgres://postgres:changeme_strong_password@AppFlowy-Postgres:5432/postgres?search_path=auth</Config>
+
+  <!-- Registration / token settings -->
+  <Config Name="JWT Expiry (seconds)" Target="GOTRUE_JWT_EXP" Default="604800" Mode="" Description="JWT token lifetime in seconds. Default: 604800 (7 days)." Type="Variable" Display="always" Required="true" Mask="false">604800</Config>
+  <Config Name="Auto-confirm Email" Target="GOTRUE_MAILER_AUTOCONFIRM" Default="true" Mode="" Description="Set true to skip email confirmation (recommended for initial setup). Set false to require email confirmation — you must also configure SMTP." Type="Variable" Display="always" Required="true" Mask="false">true</Config>
+  <Config Name="Disable Public Signup" Target="GOTRUE_DISABLE_SIGNUP" Default="false" Mode="" Description="Set true to allow only invited users to sign up." Type="Variable" Display="always" Required="true" Mask="false">false</Config>
+  <Config Name="Rate Limit (emails/min)" Target="GOTRUE_RATE_LIMIT_EMAIL_SENT" Default="100" Mode="" Description="Maximum emails GoTrue can send per minute." Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+
+  <!-- Internal fixed settings -->
+  <Config Name="DB Driver" Target="GOTRUE_DB_DRIVER" Default="postgres" Mode="" Description="Database driver — always postgres." Type="Variable" Display="advanced" Required="true" Mask="false">postgres</Config>
+  <Config Name="Site URL" Target="GOTRUE_SITE_URL" Default="appflowy-flutter://" Mode="" Description="Deep-link scheme for the AppFlowy native app." Type="Variable" Display="advanced" Required="false" Mask="false">appflowy-flutter://</Config>
+  <Config Name="URI Allow List" Target="GOTRUE_URI_ALLOW_LIST" Default="**" Mode="" Description="Allowed OAuth redirect URIs. ** permits all; restrict for production." Type="Variable" Display="advanced" Required="false" Mask="false">**</Config>
+  <Config Name="JWT Admin Group" Target="GOTRUE_JWT_ADMIN_GROUP_NAME" Default="supabase_admin" Mode="" Description="JWT group name for admin users." Type="Variable" Display="advanced" Required="false" Mask="false">supabase_admin</Config>
+  <Config Name="Internal Port" Target="PORT" Default="9999" Mode="" Description="GoTrue internal listen port. Do not change." Type="Variable" Display="advanced" Required="false" Mask="false">9999</Config>
+
+  <!-- Mail path rewrites -->
+  <Config Name="Mailer Confirm Path" Target="GOTRUE_MAILER_URLPATHS_CONFIRMATION" Default="/gotrue/verify" Mode="" Description="URL path for email confirmation links." Type="Variable" Display="advanced" Required="false" Mask="false">/gotrue/verify</Config>
+  <Config Name="Mailer Invite Path" Target="GOTRUE_MAILER_URLPATHS_INVITE" Default="/gotrue/verify" Mode="" Description="URL path for invite links." Type="Variable" Display="advanced" Required="false" Mask="false">/gotrue/verify</Config>
+  <Config Name="Mailer Recovery Path" Target="GOTRUE_MAILER_URLPATHS_RECOVERY" Default="/gotrue/verify" Mode="" Description="URL path for password recovery links." Type="Variable" Display="advanced" Required="false" Mask="false">/gotrue/verify</Config>
+  <Config Name="Mailer Email-Change Path" Target="GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE" Default="/gotrue/verify" Mode="" Description="URL path for email-change confirmation links." Type="Variable" Display="advanced" Required="false" Mask="false">/gotrue/verify</Config>
+
+  <!-- SMTP (optional) -->
+  <Config Name="SMTP Host" Target="GOTRUE_SMTP_HOST" Default="" Mode="" Description="SMTP server hostname (e.g. smtp.gmail.com). Required if GOTRUE_MAILER_AUTOCONFIRM=false." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SMTP Port" Target="GOTRUE_SMTP_PORT" Default="465" Mode="" Description="SMTP port. Use 465 for TLS/SMTPS, 587 for STARTTLS." Type="Variable" Display="advanced" Required="false" Mask="false">465</Config>
+  <Config Name="SMTP User" Target="GOTRUE_SMTP_USER" Default="" Mode="" Description="SMTP sender email address." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SMTP Password" Target="GOTRUE_SMTP_PASS" Default="" Mode="" Description="SMTP password." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="SMTP Admin Email" Target="GOTRUE_SMTP_ADMIN_EMAIL" Default="" Mode="" Description="Admin email used as the From address." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SMTP Max Frequency" Target="GOTRUE_SMTP_MAX_FREQUENCY" Default="1ns" Mode="" Description="Minimum interval between emails to the same address. Use 1ns for no limit." Type="Variable" Display="advanced" Required="false" Mask="false">1ns</Config>
+  <Config Name="Magic Link Template URL" Target="GOTRUE_MAILER_TEMPLATES_MAGIC_LINK" Default="" Mode="" Description="Optional: public URL to a custom magic-link email HTML template." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+
+  <!-- Google OAuth (optional) -->
+  <Config Name="Google OAuth Enabled" Target="GOTRUE_EXTERNAL_GOOGLE_ENABLED" Default="false" Mode="" Description="Enable Google OAuth login." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="Google Client ID" Target="GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID" Default="" Mode="" Description="Google OAuth client ID." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Google Client Secret" Target="GOTRUE_EXTERNAL_GOOGLE_SECRET" Default="" Mode="" Description="Google OAuth client secret." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="Google Redirect URI" Target="GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI" Default="http://YOUR_SERVER_IP/gotrue/callback" Mode="" Description="Google OAuth redirect URI." Type="Variable" Display="advanced" Required="false" Mask="false">http://YOUR_SERVER_IP/gotrue/callback</Config>
+
+  <!-- GitHub OAuth (optional) -->
+  <Config Name="GitHub OAuth Enabled" Target="GOTRUE_EXTERNAL_GITHUB_ENABLED" Default="false" Mode="" Description="Enable GitHub OAuth login." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="GitHub Client ID" Target="GOTRUE_EXTERNAL_GITHUB_CLIENT_ID" Default="" Mode="" Description="GitHub OAuth app client ID." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="GitHub Client Secret" Target="GOTRUE_EXTERNAL_GITHUB_SECRET" Default="" Mode="" Description="GitHub OAuth app client secret." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="GitHub Redirect URI" Target="GOTRUE_EXTERNAL_GITHUB_REDIRECT_URI" Default="http://YOUR_SERVER_IP/gotrue/callback" Mode="" Description="GitHub OAuth redirect URI." Type="Variable" Display="advanced" Required="false" Mask="false">http://YOUR_SERVER_IP/gotrue/callback</Config>
+
+  <!-- Discord OAuth (optional) -->
+  <Config Name="Discord OAuth Enabled" Target="GOTRUE_EXTERNAL_DISCORD_ENABLED" Default="false" Mode="" Description="Enable Discord OAuth login." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="Discord Client ID" Target="GOTRUE_EXTERNAL_DISCORD_CLIENT_ID" Default="" Mode="" Description="Discord OAuth application client ID." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Discord Client Secret" Target="GOTRUE_EXTERNAL_DISCORD_SECRET" Default="" Mode="" Description="Discord OAuth application client secret." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="Discord Redirect URI" Target="GOTRUE_EXTERNAL_DISCORD_REDIRECT_URI" Default="http://YOUR_SERVER_IP/gotrue/callback" Mode="" Description="Discord OAuth redirect URI." Type="Variable" Display="advanced" Required="false" Mask="false">http://YOUR_SERVER_IP/gotrue/callback</Config>
+
+  <!-- SAML (optional) -->
+  <Config Name="SAML Enabled" Target="GOTRUE_SAML_ENABLED" Default="false" Mode="" Description="Enable SAML 2.0 single sign-on." Type="Variable" Display="advanced" Required="false" Mask="false">false</Config>
+  <Config Name="SAML Private Key" Target="GOTRUE_SAML_PRIVATE_KEY" Default="" Mode="" Description="PEM-encoded private key for SAML 2.0 signing." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+</Container>

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-Nginx</Name>
+  <Repository>nginx:stable-alpine</Repository>
+  <Registry>https://hub.docker.com/_/nginx</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>BSD-2-Clause</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>Nginx reverse proxy — the single entry point for all AppFlowy Cloud services. Routes HTTP/WebSocket traffic to AppFlowy-Cloud, AppFlowy-GoTrue, AppFlowy-Web, AppFlowy-Admin, and AppFlowy-MinIO. Deploy last. Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <WebUI>http://[IP]:[PORT:80]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Nginx.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams></ExtraParams>
+  <Description>
+    Nginx reverse proxy — the public entry point for the entire AppFlowy Cloud stack.
+    Routes:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code&gt;/&lt;/code&gt; → AppFlowy Web&lt;/li&gt;
+      &lt;li&gt;&lt;code&gt;/api&lt;/code&gt;, &lt;code&gt;/ws&lt;/code&gt; → AppFlowy Cloud backend&lt;/li&gt;
+      &lt;li&gt;&lt;code&gt;/gotrue/&lt;/code&gt; → GoTrue auth&lt;/li&gt;
+      &lt;li&gt;&lt;code&gt;/console&lt;/code&gt; → Admin Frontend&lt;/li&gt;
+      &lt;li&gt;&lt;code&gt;/minio/&lt;/code&gt; → MinIO Web Console&lt;/li&gt;
+      &lt;li&gt;&lt;code&gt;/minio-api/&lt;/code&gt; → MinIO S3 API (presigned URLs)&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;br/&gt;
+    &lt;b&gt;Before starting:&lt;/b&gt; Download the nginx.conf from the template repository and place it at
+    &lt;code&gt;/mnt/user/appdata/AppFlowy-Nginx/nginx.conf&lt;/code&gt;.
+    Get it from: &lt;code&gt;https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/nginx/nginx.conf&lt;/code&gt;
+    &lt;br/&gt;&lt;br/&gt;
+    For &lt;b&gt;TLS/HTTPS&lt;/b&gt;: place &lt;code&gt;certificate.crt&lt;/code&gt; and &lt;code&gt;private_key.key&lt;/code&gt; in
+    &lt;code&gt;/mnt/user/appdata/AppFlowy-Nginx/ssl/&lt;/code&gt; and edit nginx.conf to enable the ssl listener.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) &lt;b&gt;AppFlowy-Nginx&lt;/b&gt;
+  </Description>
+
+  <!-- Config files (required) -->
+  <Config Name="nginx.conf" Target="/etc/nginx/nginx.conf" Default="/mnt/user/appdata/AppFlowy-Nginx/nginx.conf" Mode="ro" Description="nginx configuration file adapted for Unraid container names. Download from: https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/nginx/nginx.conf" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/nginx.conf</Config>
+  <Config Name="SSL Directory" Target="/etc/nginx/ssl" Default="/mnt/user/appdata/AppFlowy-Nginx/ssl" Mode="ro" Description="Directory for TLS certificate and key (certificate.crt, private_key.key). Create even if not using TLS yet — nginx references the path at startup." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/ssl</Config>
+
+  <!-- Ports -->
+  <Config Name="HTTP Port" Target="80" Default="80" Mode="tcp" Description="HTTP port exposed to your Unraid host / LAN. This is the main AppFlowy access port." Type="Port" Display="always" Required="true" Mask="false">80</Config>
+  <Config Name="HTTPS Port" Target="443" Default="443" Mode="tcp" Description="HTTPS port. Only needed if you configure TLS in nginx.conf." Type="Port" Display="always" Required="false" Mask="false">443</Config>
+</Container>

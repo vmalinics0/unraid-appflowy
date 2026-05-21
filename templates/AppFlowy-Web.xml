@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-Web</Name>
+  <Repository>appflowyinc/appflowy_web:latest</Repository>
+  <Registry>https://hub.docker.com/r/appflowyinc/appflowy_web</Registry>
+  <Network>custom:appflowy</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>AGPL-3.0</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>AppFlowy Web — the browser-based AppFlowy client. Served at the root path / via the nginx proxy. Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Web.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+  <ExtraParams></ExtraParams>
+  <Description>
+    AppFlowy Web — the official browser client for AppFlowy Cloud.
+    Accessed via AppFlowy-Nginx at &lt;b&gt;http://YOUR_SERVER_IP/&lt;/b&gt;.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) AppFlowy-Nginx
+  </Description>
+
+  <Config Name="Base URL" Target="APPFLOWY_BASE_URL" Default="http://YOUR_SERVER_IP" Mode="" Description="Public-facing base URL. Must match Base URL in AppFlowy-Cloud. No trailing slash." Type="Variable" Display="always" Required="true" Mask="false">http://YOUR_SERVER_IP</Config>
+  <Config Name="GoTrue Base URL" Target="APPFLOWY_GOTRUE_BASE_URL" Default="http://YOUR_SERVER_IP/gotrue" Mode="" Description="Public-facing GoTrue URL (used by the browser to reach the auth service)." Type="Variable" Display="always" Required="true" Mask="false">http://YOUR_SERVER_IP/gotrue</Config>
+  <Config Name="WebSocket Base URL" Target="APPFLOWY_WS_BASE_URL" Default="ws://YOUR_SERVER_IP/ws/v2" Mode="" Description="WebSocket URL for real-time collaboration. Change ws:// to wss:// if using TLS." Type="Variable" Display="always" Required="true" Mask="false">ws://YOUR_SERVER_IP/ws/v2</Config>
+</Container>
