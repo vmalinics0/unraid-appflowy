@@ -12,11 +12,12 @@
   <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
   <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
   <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>AppFlowy Cloud — the core Rust backend providing REST API, WebSocket real-time collaboration, file management, and AI integration. Deploy fifth (after GoTrue). Part of the AppFlowy Cloud stack.</Overview>
+  <Overview>[Step 5/7] AppFlowy Cloud — the core Rust backend providing REST API, WebSocket real-time collaboration, file management, and AI integration. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Cloud.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
   <ExtraParams></ExtraParams>
+  <Requires>Custom Docker network named "appflowy" must exist before deploying any container in this stack. Create it via SSH or the Unraid terminal: docker network create appflowy — Network Type is pre-set to "appflowy" by default, verify it is selected.</Requires>
   <Description>
     AppFlowy Cloud — the primary Rust-based backend service for AppFlowy.
     Provides the REST API (:8000), WebSocket collaboration endpoints, document storage, and AI features.

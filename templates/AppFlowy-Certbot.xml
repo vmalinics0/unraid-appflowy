@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>AppFlowy-Certbot</Name>
+  <Repository>certbot/certbot:latest</Repository>
+  <Registry>https://hub.docker.com/r/certbot/certbot</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <MinVer>6.12</MinVer>
+  <License>Apache-2.0</License>
+  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
+  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
+  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
+  <Overview>[Optional · TLS] Certbot/ACME automated certificate management for AppFlowy-Nginx. Obtains and renews Let's Encrypt TLS certificates using the HTTP-01 webroot challenge. Part of the AppFlowy Cloud stack.</Overview>
+  <Category>Productivity: Tools:</Category>
+  <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Certbot.xml</TemplateURL>
+  <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
+
+  <!-- certonly command: obtains/renews the certificate using the webroot challenge.
+       Certbot exits after each run; the container will stop — this is expected.
+       Schedule periodic restarts (e.g. via Unraid User Scripts) to auto-renew.
+       Certbot skips renewal if the cert is still valid for more than 30 days.
+       After the first successful run, restart AppFlowy-Nginx to load the new cert. -->
+  <ExtraParams>certonly --webroot -w /var/www/certbot --agree-tos --non-interactive -d yourdomain.com --email admin@yourdomain.com</ExtraParams>
+
+  <Requires>AppFlowy-Nginx must be running with nginx-letsencrypt.conf and port 80 accessible from the internet before running this container. Both containers share the letsencrypt and certbot-webroot host directories.</Requires>
+  <Description>
+    Certbot (ACME client) for automated Let's Encrypt TLS certificate management.
+    Works as a companion to &lt;b&gt;AppFlowy-Nginx&lt;/b&gt; using the HTTP-01 webroot challenge.
+    &lt;br/&gt;&lt;br/&gt;
+    &lt;b&gt;Setup steps:&lt;/b&gt;
+    &lt;ol&gt;
+      &lt;li&gt;Edit the &lt;b&gt;Extra Parameters&lt;/b&gt; field: replace &lt;code&gt;yourdomain.com&lt;/code&gt; and &lt;code&gt;admin@yourdomain.com&lt;/code&gt; with your actual domain and email.&lt;/li&gt;
+      &lt;li&gt;Make sure AppFlowy-Nginx is running with &lt;code&gt;nginx-letsencrypt.conf&lt;/code&gt; and port 80 is reachable from the internet.&lt;/li&gt;
+      &lt;li&gt;Start AppFlowy-Certbot. It will obtain the certificate and exit — this is normal.&lt;/li&gt;
+      &lt;li&gt;Restart AppFlowy-Nginx to load the new certificate.&lt;/li&gt;
+      &lt;li&gt;Schedule AppFlowy-Certbot to restart periodically (e.g. monthly via Unraid User Scripts plugin) to auto-renew. Certbot skips renewal if the cert expires in more than 30 days.&lt;/li&gt;
+    &lt;/ol&gt;
+    &lt;br/&gt;
+    &lt;b&gt;Certificate paths (inside the nginx container):&lt;/b&gt;&lt;br/&gt;
+    &lt;code&gt;/etc/letsencrypt/live/yourdomain.com/fullchain.pem&lt;/code&gt;&lt;br/&gt;
+    &lt;code&gt;/etc/letsencrypt/live/yourdomain.com/privkey.pem&lt;/code&gt;&lt;br/&gt;
+    Update &lt;code&gt;nginx-letsencrypt.conf&lt;/code&gt; to replace &lt;code&gt;YOUR_DOMAIN&lt;/code&gt; with your actual domain name.
+  </Description>
+
+  <!-- Shared with AppFlowy-Nginx -->
+  <Config Name="Let's Encrypt data" Target="/etc/letsencrypt" Default="/mnt/user/appdata/AppFlowy-Nginx/letsencrypt" Mode="rw" Description="Persistent storage for Let's Encrypt account keys and certificates. Must match the path mapped in AppFlowy-Nginx." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/letsencrypt</Config>
+  <Config Name="Certbot webroot" Target="/var/www/certbot" Default="/mnt/user/appdata/AppFlowy-Nginx/certbot-webroot" Mode="rw" Description="Webroot directory for ACME challenge files. Must match the path mapped in AppFlowy-Nginx." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/certbot-webroot</Config>
+</Container>

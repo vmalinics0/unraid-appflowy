@@ -12,17 +12,16 @@
   <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
   <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
   <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>PostgreSQL 16 with pgvector extension — the primary database for AppFlowy Cloud. Deploy this first. Part of the AppFlowy Cloud stack.</Overview>
+  <Overview>[Step 1/7] PostgreSQL 16 with pgvector extension — the primary database for AppFlowy Cloud. Deploy first. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Postgres.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
   <ExtraParams></ExtraParams>
+  <Requires>Custom Docker network named "appflowy" must exist before deploying any container in this stack. Create it via SSH or the Unraid terminal: docker network create appflowy — Network Type is pre-set to "appflowy" by default, verify it is selected.</Requires>
   <Description>
     PostgreSQL 16 with the pgvector extension, used as the primary relational database for AppFlowy Cloud.
     &lt;br/&gt;&lt;br/&gt;
     &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) AppFlowy-Nginx
-    &lt;br/&gt;&lt;br/&gt;
-    &lt;b&gt;Prerequisite:&lt;/b&gt; Create a custom Docker network named &lt;b&gt;appflowy&lt;/b&gt; before installing any container. In Unraid go to Settings &amp;gt; Docker &amp;gt; Custom Networks, or run: &lt;code&gt;docker network create appflowy&lt;/code&gt;
   </Description>
 
   <!-- Storage -->

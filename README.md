@@ -17,6 +17,7 @@ Unraid Community Apps templates for self-hosting [AppFlowy Cloud](https://github
 | **AppFlowy-Search** | `appflowyinc/appflowy_search` | Full-text & semantic search |
 | **AppFlowy-AI** _(optional)_ | `appflowyinc/appflowy_ai` | LLM chat & embeddings |
 | **AppFlowy-Nginx** | `nginx:stable-alpine` | Reverse proxy (public entry point) |
+| **AppFlowy-Certbot** _(optional)_ | `certbot/certbot` | Automated Let's Encrypt TLS certificates |
 
 ## Prerequisites
 
@@ -24,9 +25,7 @@ Unraid Community Apps templates for self-hosting [AppFlowy Cloud](https://github
 
 All containers communicate on a shared custom bridge network.
 
-**In Unraid UI:** Settings → Docker → Custom Networks → Add → name it `appflowy`.
-
-**Or via SSH:**
+**Via SSH or the Unraid terminal:**
 ```bash
 docker network create appflowy
 ```
@@ -49,20 +48,21 @@ The nginx.conf in this repo uses Unraid container names (`AppFlowy-Cloud`, `AppF
 
 ## Deploy Order
 
-Deploy containers **in this order** (each group can be deployed in parallel):
+Deploy containers **in this order** (each group can be deployed in parallel).
+The install step number is shown in each app's description in Community Apps.
 
 ```
-1. AppFlowy-Postgres
-2. AppFlowy-Redis
-3. AppFlowy-MinIO
-4. AppFlowy-GoTrue        (waits for Postgres)
-5. AppFlowy-Cloud         (waits for GoTrue, Postgres, Redis, MinIO)
-6. AppFlowy-Admin         \
-   AppFlowy-Web            | (wait for AppFlowy-Cloud)
-   AppFlowy-Worker         |
-   AppFlowy-Search         |
-   AppFlowy-AI (optional)  /
-7. AppFlowy-Nginx          (deploy last)
+Step 1 — AppFlowy-Postgres
+Step 2 — AppFlowy-Redis
+Step 3 — AppFlowy-MinIO
+Step 4 — AppFlowy-GoTrue        (waits for Postgres)
+Step 5 — AppFlowy-Cloud         (waits for GoTrue, Postgres, Redis, MinIO)
+Step 6 — AppFlowy-Admin         \
+          AppFlowy-Web            | (wait for AppFlowy-Cloud)
+          AppFlowy-Worker         |
+          AppFlowy-Search         |
+          AppFlowy-AI (optional)  /
+Step 7 — AppFlowy-Nginx          (deploy last)
 ```
 
 ## Required Configuration
@@ -89,13 +89,43 @@ Native desktop/mobile clients: point them to `http://YOUR_SERVER_IP` as the serv
 
 ## TLS / HTTPS
 
+Three nginx config files are provided; choose one:
+
+| Config file | Use when |
+|---|---|
+| `nginx/nginx.conf` | HTTP only (default, no TLS) |
+| `nginx/nginx-https-custom.conf` | You have your own TLS certificate |
+| `nginx/nginx-letsencrypt.conf` | Automated Let's Encrypt certificates |
+
+### Option A — User-provided certificate
+
 1. Place your certificate and key in `/mnt/user/appdata/AppFlowy-Nginx/ssl/`:
    - `certificate.crt`
    - `private_key.key`
-2. Edit `nginx.conf` to uncomment the `ssl_certificate` lines and the `listen 443 ssl;` line, and comment out `listen 80;`.
+2. Point the AppFlowy-Nginx **nginx.conf** path to `nginx-https-custom.conf`.
 3. Update all `http://` URLs in every template to `https://`.
 4. Update `APPFLOWY_WS_BASE_URL` in **AppFlowy-Web** from `ws://` to `wss://`.
 5. Restart all containers.
+
+### Option B — Automated Let's Encrypt (AppFlowy-Certbot)
+
+> Requires a public domain name with port 80 reachable from the internet.
+
+1. Create the required host directories:
+   ```bash
+   mkdir -p /mnt/user/appdata/AppFlowy-Nginx/letsencrypt
+   mkdir -p /mnt/user/appdata/AppFlowy-Nginx/certbot-webroot
+   ```
+2. Download `nginx-letsencrypt.conf` and edit it — replace `YOUR_DOMAIN` (two occurrences) with your actual domain:
+   ```bash
+   curl -o /mnt/user/appdata/AppFlowy-Nginx/nginx-letsencrypt.conf \
+     https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/nginx/nginx-letsencrypt.conf
+   ```
+3. Point the AppFlowy-Nginx **nginx.conf** path to `nginx-letsencrypt.conf` and restart it.
+4. In Community Apps, install **AppFlowy-Certbot**. Edit its **Extra Parameters** field — replace `yourdomain.com` and `admin@yourdomain.com` with your real values. Start it; it will obtain the certificate and exit (this is normal).
+5. Restart **AppFlowy-Nginx** to load the new certificate.
+6. Update all `http://` URLs in every template to `https://` and `APPFLOWY_WS_BASE_URL` from `ws://` to `wss://`.
+7. Schedule AppFlowy-Certbot to restart monthly (e.g. via the Unraid User Scripts plugin) for automatic renewal. After each renewal, restart AppFlowy-Nginx.
 
 ## Submitting to Community Apps
 

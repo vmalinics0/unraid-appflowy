@@ -12,11 +12,12 @@
   <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
   <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
   <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>AppFlowy Search — full-text and semantic (AI-powered) search service for AppFlowy Cloud documents. Part of the AppFlowy Cloud stack.</Overview>
+  <Overview>[Step 6/7] AppFlowy Search — full-text and semantic (AI-powered) search service for AppFlowy Cloud documents. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Search.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
   <ExtraParams></ExtraParams>
+  <Requires>Custom Docker network named "appflowy" must exist before deploying any container in this stack. Create it via SSH or the Unraid terminal: docker network create appflowy — Network Type is pre-set to "appflowy" by default, verify it is selected.</Requires>
   <Description>
     AppFlowy Search — provides full-text keyword search and optional AI-powered semantic search over AppFlowy documents.
     Full-text search works without an OpenAI API key. Semantic/vector search requires &lt;b&gt;AI OpenAI API Key&lt;/b&gt;.

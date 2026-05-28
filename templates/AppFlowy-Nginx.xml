@@ -12,12 +12,13 @@
   <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
   <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
   <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>Nginx reverse proxy — the single entry point for all AppFlowy Cloud services. Routes HTTP/WebSocket traffic to AppFlowy-Cloud, AppFlowy-GoTrue, AppFlowy-Web, AppFlowy-Admin, and AppFlowy-MinIO. Deploy last. Part of the AppFlowy Cloud stack.</Overview>
+  <Overview>[Step 7/7 · deploy last] Nginx reverse proxy — the single entry point for all AppFlowy Cloud services. Routes HTTP/WebSocket traffic to AppFlowy-Cloud, AppFlowy-GoTrue, AppFlowy-Web, AppFlowy-Admin, and AppFlowy-MinIO. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <WebUI>http://[IP]:[PORT:80]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Nginx.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
   <ExtraParams></ExtraParams>
+  <Requires>Custom Docker network named "appflowy" must exist before deploying any container in this stack. Create it via SSH or the Unraid terminal: docker network create appflowy — Network Type is pre-set to "appflowy" by default, verify it is selected.</Requires>
   <Description>
     Nginx reverse proxy — the public entry point for the entire AppFlowy Cloud stack.
     Routes:
@@ -34,15 +35,21 @@
     &lt;code&gt;/mnt/user/appdata/AppFlowy-Nginx/nginx.conf&lt;/code&gt;.
     Get it from: &lt;code&gt;https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/nginx/nginx.conf&lt;/code&gt;
     &lt;br/&gt;&lt;br/&gt;
-    For &lt;b&gt;TLS/HTTPS&lt;/b&gt;: place &lt;code&gt;certificate.crt&lt;/code&gt; and &lt;code&gt;private_key.key&lt;/code&gt; in
-    &lt;code&gt;/mnt/user/appdata/AppFlowy-Nginx/ssl/&lt;/code&gt; and edit nginx.conf to enable the ssl listener.
+    &lt;b&gt;TLS option A — user-provided certs:&lt;/b&gt; place &lt;code&gt;certificate.crt&lt;/code&gt; and &lt;code&gt;private_key.key&lt;/code&gt; in
+    &lt;code&gt;/mnt/user/appdata/AppFlowy-Nginx/ssl/&lt;/code&gt; and use &lt;code&gt;nginx-https-custom.conf&lt;/code&gt; instead of &lt;code&gt;nginx.conf&lt;/code&gt;.
+    &lt;br/&gt;
+    &lt;b&gt;TLS option B — Let's Encrypt auto-certs:&lt;/b&gt; use &lt;code&gt;nginx-letsencrypt.conf&lt;/code&gt; and deploy the companion &lt;b&gt;AppFlowy-Certbot&lt;/b&gt; container.
+    Certbot writes certs to &lt;code&gt;/mnt/user/appdata/AppFlowy-Nginx/letsencrypt/&lt;/code&gt; and serves the ACME challenge via the &lt;code&gt;certbot-webroot&lt;/code&gt; path mapped below.
+    Restart AppFlowy-Nginx once after initial cert issuance and after each renewal.
     &lt;br/&gt;&lt;br/&gt;
     &lt;b&gt;Deploy order:&lt;/b&gt; (1) AppFlowy-Postgres → (2) AppFlowy-Redis → (3) AppFlowy-MinIO → (4) AppFlowy-GoTrue → (5) AppFlowy-Cloud → (6) AppFlowy-Admin, AppFlowy-Web, AppFlowy-Worker, AppFlowy-Search → (7) &lt;b&gt;AppFlowy-Nginx&lt;/b&gt;
   </Description>
 
   <!-- Config files (required) -->
-  <Config Name="nginx.conf" Target="/etc/nginx/nginx.conf" Default="/mnt/user/appdata/AppFlowy-Nginx/nginx.conf" Mode="ro" Description="nginx configuration file adapted for Unraid container names. Download from: https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/nginx/nginx.conf" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/nginx.conf</Config>
-  <Config Name="SSL Directory" Target="/etc/nginx/ssl" Default="/mnt/user/appdata/AppFlowy-Nginx/ssl" Mode="ro" Description="Directory for TLS certificate and key (certificate.crt, private_key.key). Create even if not using TLS yet — nginx references the path at startup." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/ssl</Config>
+  <Config Name="nginx.conf" Target="/etc/nginx/nginx.conf" Default="/mnt/user/appdata/AppFlowy-Nginx/nginx.conf" Mode="ro" Description="nginx configuration file. Use nginx.conf (HTTP only), nginx-https-custom.conf (user-provided TLS certs), or nginx-letsencrypt.conf (Let's Encrypt). All configs are in the template repository." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/nginx.conf</Config>
+  <Config Name="SSL Directory" Target="/etc/nginx/ssl" Default="/mnt/user/appdata/AppFlowy-Nginx/ssl" Mode="ro" Description="Directory for user-provided TLS certificate and key (certificate.crt, private_key.key). Required for nginx-https-custom.conf. Create the directory even if empty." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/ssl</Config>
+  <Config Name="Let's Encrypt certs (optional)" Target="/etc/letsencrypt" Default="/mnt/user/appdata/AppFlowy-Nginx/letsencrypt" Mode="ro" Description="Directory where AppFlowy-Certbot stores Let's Encrypt certificates. Required only when using nginx-letsencrypt.conf." Type="Path" Display="advanced" Required="false" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/letsencrypt</Config>
+  <Config Name="Certbot webroot (optional)" Target="/var/www/certbot" Default="/mnt/user/appdata/AppFlowy-Nginx/certbot-webroot" Mode="ro" Description="Webroot directory for Let's Encrypt HTTP-01 ACME challenge files. Required only when using nginx-letsencrypt.conf with AppFlowy-Certbot." Type="Path" Display="advanced" Required="false" Mask="false">/mnt/user/appdata/AppFlowy-Nginx/certbot-webroot</Config>
 
   <!-- Ports -->
   <Config Name="HTTP Port" Target="80" Default="80" Mode="tcp" Description="HTTP port exposed to your Unraid host / LAN. This is the main AppFlowy access port." Type="Port" Display="always" Required="true" Mask="false">80</Config>

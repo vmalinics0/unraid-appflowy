@@ -12,11 +12,12 @@
   <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
   <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
   <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>AppFlowy Worker — background job processor handling document imports, exports, and async tasks for AppFlowy Cloud. Part of the AppFlowy Cloud stack.</Overview>
+  <Overview>[Step 6/7] AppFlowy Worker — background job processor handling document imports, exports, and async tasks for AppFlowy Cloud. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Worker.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
   <ExtraParams></ExtraParams>
+  <Requires>Custom Docker network named "appflowy" must exist before deploying any container in this stack. Create it via SSH or the Unraid terminal: docker network create appflowy — Network Type is pre-set to "appflowy" by default, verify it is selected.</Requires>
   <Description>
     AppFlowy Worker — a background Rust service that processes asynchronous jobs such as document imports and exports.
     Must share the same PostgreSQL, Redis, and S3/MinIO credentials as AppFlowy-Cloud.

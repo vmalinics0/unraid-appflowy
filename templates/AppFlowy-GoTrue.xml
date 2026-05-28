@@ -12,11 +12,12 @@
   <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
   <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
   <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>GoTrue authentication service for AppFlowy Cloud — handles user sign-up, login, JWT issuance, OAuth, email magic links, and SAML. Deploy fourth (after Postgres). Part of the AppFlowy Cloud stack.</Overview>
+  <Overview>[Step 4/7] GoTrue authentication service for AppFlowy Cloud — handles user sign-up, login, JWT issuance, OAuth, email magic links, and SAML. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-GoTrue.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
   <ExtraParams></ExtraParams>
+  <Requires>Custom Docker network named "appflowy" must exist before deploying any container in this stack. Create it via SSH or the Unraid terminal: docker network create appflowy — Network Type is pre-set to "appflowy" by default, verify it is selected.</Requires>
   <Description>
     GoTrue (Supabase Auth) — the authentication and identity service for AppFlowy Cloud.
     Manages user registration, JWT token issuance, OAuth providers (Google, GitHub, Discord), email confirmation, and SAML 2.0.

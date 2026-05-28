@@ -12,11 +12,12 @@
   <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
   <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
   <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>Redis 7 in-memory cache and pub/sub broker for AppFlowy Cloud real-time collaboration and task queuing. Deploy second. Part of the AppFlowy Cloud stack.</Overview>
+  <Overview>[Step 2/7] Redis 7 in-memory cache and pub/sub broker for AppFlowy Cloud real-time collaboration and task queuing. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Redis.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
   <ExtraParams></ExtraParams>
+  <Requires>Custom Docker network named "appflowy" must exist before deploying any container in this stack. Create it via SSH or the Unraid terminal: docker network create appflowy — Network Type is pre-set to "appflowy" by default, verify it is selected.</Requires>
   <Description>
     Redis 7 — in-memory data store used by AppFlowy Cloud for WebSocket pub/sub, caching, and background job queuing.
     &lt;br/&gt;&lt;br/&gt;

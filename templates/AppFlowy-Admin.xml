@@ -12,11 +12,12 @@
   <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
   <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
   <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>AppFlowy Admin Frontend — the web-based admin console for managing users, workspaces, and settings. Accessible at /console via the nginx proxy. Part of the AppFlowy Cloud stack.</Overview>
+  <Overview>[Step 6/7] AppFlowy Admin Frontend — the web-based admin console for managing users, workspaces, and settings. Accessible at /console via the nginx proxy. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Admin.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>
   <ExtraParams></ExtraParams>
+  <Requires>Custom Docker network named "appflowy" must exist before deploying any container in this stack. Create it via SSH or the Unraid terminal: docker network create appflowy — Network Type is pre-set to "appflowy" by default, verify it is selected.</Requires>
   <Description>
     AppFlowy Admin Frontend — a Next.js web application for server administration.
     Accessible through AppFlowy-Nginx at &lt;b&gt;http://YOUR_SERVER_IP/console&lt;/b&gt;.
