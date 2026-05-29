@@ -134,6 +134,12 @@ Three nginx config files are provided; choose one:
 3. Submit the repository URL at [https://ca.unraid.net/submit](https://ca.unraid.net/submit).
 4. Run **Validate** and **Scan** in the CA submission flow.
 
+## Support
+
+- Template issues / requests: https://github.com/vmalinics0/unraid-appflowy/issues
+- Template docs: https://github.com/vmalinics0/unraid-appflowy/blob/main/README.md
+- Upstream AppFlowy Cloud discussions: https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions
+
 ## Upstream
 
 - [AppFlowy-Cloud GitHub](https://github.com/AppFlowy-IO/AppFlowy-Cloud)

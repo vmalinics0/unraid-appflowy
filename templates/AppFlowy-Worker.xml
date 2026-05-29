@@ -9,10 +9,10 @@
   <Privileged>false</Privileged>
   <MinVer>6.12</MinVer>
   <License>AGPL-3.0</License>
-  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
-  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
-  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>[Step 6/7] AppFlowy Worker — background job processor handling document imports, exports, and async tasks for AppFlowy Cloud. Part of the AppFlowy Cloud stack.</Overview>
+  <Support>https://github.com/vmalinics0/unraid-appflowy/issues</Support>
+  <Project>https://github.com/vmalinics0/unraid-appflowy</Project>
+  <ReadMe>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/README.md</ReadMe>
+  <Overview>Step 6/7: AppFlowy Worker — background job processor handling document imports, exports, and async tasks for AppFlowy Cloud. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Worker.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>

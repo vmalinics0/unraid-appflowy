@@ -9,10 +9,10 @@
   <Privileged>false</Privileged>
   <MinVer>6.12</MinVer>
   <License>Apache-2.0</License>
-  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
-  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
-  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>[Optional · TLS] Certbot/ACME automated certificate management for AppFlowy-Nginx. Obtains and renews Let's Encrypt TLS certificates using the HTTP-01 webroot challenge. Part of the AppFlowy Cloud stack.</Overview>
+  <Support>https://github.com/vmalinics0/unraid-appflowy/issues</Support>
+  <Project>https://github.com/vmalinics0/unraid-appflowy</Project>
+  <ReadMe>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/README.md</ReadMe>
+  <Overview>Optional (TLS): Certbot/ACME automated certificate management for AppFlowy-Nginx. Obtains and renews Let's Encrypt TLS certificates using the HTTP-01 webroot challenge. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Certbot.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>

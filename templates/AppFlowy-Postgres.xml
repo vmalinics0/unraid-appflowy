@@ -9,10 +9,10 @@
   <Privileged>false</Privileged>
   <MinVer>6.12</MinVer>
   <License>PostgreSQL</License>
-  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
-  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
-  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>[Step 1/7] PostgreSQL 16 with pgvector extension — the primary database for AppFlowy Cloud. Deploy first. Part of the AppFlowy Cloud stack.</Overview>
+  <Support>https://github.com/vmalinics0/unraid-appflowy/issues</Support>
+  <Project>https://github.com/vmalinics0/unraid-appflowy</Project>
+  <ReadMe>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/README.md</ReadMe>
+  <Overview>Step 1/7: PostgreSQL 16 with pgvector extension — the primary database for AppFlowy Cloud. Deploy first. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Postgres.xml</TemplateURL>
   <Icon>https://avatars.githubusercontent.com/u/81710027?s=200&amp;v=4</Icon>

@@ -9,10 +9,10 @@
   <Privileged>false</Privileged>
   <MinVer>6.12</MinVer>
   <License>BSD-2-Clause</License>
-  <Support>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Support>
-  <Project>https://github.com/AppFlowy-IO/AppFlowy-Cloud</Project>
-  <ReadMe>https://raw.githubusercontent.com/AppFlowy-IO/AppFlowy-Cloud/main/README.md</ReadMe>
-  <Overview>[Step 7/7 · deploy last] Nginx reverse proxy — the single entry point for all AppFlowy Cloud services. Routes HTTP/WebSocket traffic to AppFlowy-Cloud, AppFlowy-GoTrue, AppFlowy-Web, AppFlowy-Admin, and AppFlowy-MinIO. Part of the AppFlowy Cloud stack.</Overview>
+  <Support>https://github.com/vmalinics0/unraid-appflowy/issues</Support>
+  <Project>https://github.com/vmalinics0/unraid-appflowy</Project>
+  <ReadMe>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/README.md</ReadMe>
+  <Overview>Step 7/7 (deploy last): Nginx reverse proxy — the single entry point for all AppFlowy Cloud services. Routes HTTP/WebSocket traffic to AppFlowy-Cloud, AppFlowy-GoTrue, AppFlowy-Web, AppFlowy-Admin, and AppFlowy-MinIO. Part of the AppFlowy Cloud stack.</Overview>
   <Category>Productivity: Tools:</Category>
   <WebUI>http://[IP]:[PORT:80]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/templates/AppFlowy-Nginx.xml</TemplateURL>

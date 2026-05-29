@@ -15,17 +15,18 @@ This repository contains Docker container templates for the full AppFlowy Cloud 
 - **AppFlowy-Web** — Browser-based AppFlowy client
 - **AppFlowy-Worker** — Background job processor
 - **AppFlowy-Search** — Full-text and semantic search
-- **AppFlowy-AI** — Optional AI/LLM features (requires OpenAI key)
+- **AppFlowy-AI** — Optional AI/LLM features (requires OpenAI or Azure OpenAI credentials)
 - **AppFlowy-Nginx** — Reverse proxy (single public entry point)
 
 **Prerequisites:** Create a custom Docker network named `appflowy` before deploying (Settings → Docker → Custom Networks, or `docker network create appflowy` via SSH).
 
 For setup instructions see the [README](https://github.com/vmalinics0/unraid-appflowy/blob/main/README.md).
 
-**Support:** [AppFlowy Cloud Discussions](https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions)
+**Support:** [Template repository issues](https://github.com/vmalinics0/unraid-appflowy/issues)  
+**Upstream discussions:** [AppFlowy Cloud Discussions](https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions)
   </Profile>
   <Icon>https://raw.githubusercontent.com/vmalinics0/unraid-appflowy/main/icon.svg</Icon>
   <WebPage>https://github.com/vmalinics0/unraid-appflowy</WebPage>
-  <Forum>https://github.com/AppFlowy-IO/AppFlowy-Cloud/discussions</Forum>
+  <Forum>https://github.com/vmalinics0/unraid-appflowy/issues</Forum>
   <Discord>https://discord.gg/appflowy</Discord>
 </CommunityApplications>
